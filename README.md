@@ -922,6 +922,24 @@ for t in phase.tasks:
                 taskApi.updateTask(t.id, t)
 ```
 
+### Dynamically create Create Release Tasks in a release (in a parallel block) and dynamically set a related subrelease template variable
+
+```
+from com.xebialabs.xlrelease.domain.variables import StringVariable
+
+subreleasesTaskGroup = taskApi.searchTasksByTitle("Subreleases", getCurrentPhase().title, getCurrentRelease().id)[0]
+for subrelease in releaseVariables["jiraIssues"]:
+    taskToAdd = taskApi.newTask("xlrelease.CreateReleaseTask")
+    taskToAdd.newReleaseTitle = "Subrelease {}".format(subrelease)
+    taskToAdd.templateId = templateApi.getTemplates('Billing Portal Core')[0].id
+    taskToAdd.folderId = folderApi.find('Billing Portal App/Sandbox', 2).id
+    jiraissue = StringVariable()
+    jiraissue.setKey("jiraIssue")
+    jiraissue.setValue("SAN-0001")
+    taskToAdd.templateVariables = [jiraissue]
+    taskApi.addTask(subreleasesTaskGroup.id, taskToAdd)
+```
+
 ### Get a list of links for Releases or Templates having a specific task type:
 (code valid for un custom task with a "TaskType" string property)
 ```
