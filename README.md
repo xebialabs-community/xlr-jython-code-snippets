@@ -2,6 +2,60 @@
 XLR code snippets using python and jython API
 
 
+### Dynamically Create Release Flow based on data map ( Jenkins example )
+
+```
+import json
+server = 'Jenkins'
+serverCI = configurationApi.searchByTypeAndTitle("jenkins.Server", str(server))[0]
+print(serverCI)
+datamap = '''[
+	{
+		"name": "Jenkins tasks",
+		"entries": [
+			{
+				"name": "Jenkins1",
+                "taskType": "jenkins.Build",
+                "precondition": "None",
+                "propertyMap": {"username":"test","password":"1234","jobName":"TEST/job/test1"}
+			},
+			{
+				"name": "Jenkins2",
+                "taskType": "jenkins.Build",
+                "precondition": "None",
+                "propertyMap": {"username":"test","password":"1234","jobName":"TEST/job/test2"}
+			},
+			{
+				"name": "Jenkins3",
+                "taskType": "jenkins.Build",
+                "precondition": "None",
+                "propertyMap": {"username":"test","password":"1234","jobName":"TEST/job/test3"}
+			}
+		],
+		"execution": "parallel"
+	}
+]
+'''
+dataobj = json.loads(datamap)
+
+for item in dataobj:
+    phase = phaseApi.newPhase(item['name'])
+    phase = phaseApi.addPhase(release.id, phase)
+    if str(item['execution']) == "parallel":
+        pgrouptask = taskApi.newTask("xlrelease.ParallelGroup")
+        pgrouptask.title = "Jenkins parrallel tasks"
+        phase = taskApi.addTask(phase.id, pgrouptask)
+    for entry in item['entries']:
+        task = taskApi.newTask(entry['taskType'])
+        task.setTitle(entry['name'])
+        task.setPrecondition(entry['precondition'])
+        task.pythonScript.setProperty("jenkinsServer", serverCI)
+        properties = entry['propertyMap']
+        for property in properties:
+            task.pythonScript.setProperty(property,properties[property])
+        taskApi.addTask(phase.id, task)
+```
+
 ### Configure reference to Certificates for access by Python Libraries in plugins
 There are third party python libraries that often refer to a certificate using certifi for connecting to secured URLs. If the cert is self-signed, you might need to make it available to the python lib.
 1. put the cert in a cert.pem file or append it to a cacerts.pem file
