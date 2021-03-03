@@ -1,0 +1,50 @@
+---
+apiVersion: xl-release/v1
+kind: Templates
+spec:
+- directory: scripts
+  children:
+  - template: parseJson
+    scheduledStartDate: 2021-03-03T14:00:00Z
+    phases:
+    - phase: New Phase
+      tasks:
+      - name: print variables
+        type: xlrelease.ScriptTask
+        script: "import json\n\nhttpConnection = {\n   'url': \"http://www.example.com\"\
+          \n}\n\nHTTP_SUCCESS = [200, 201, 202, 203, 204, 205, 206, 207, 208]\n\n\
+          httpRequest = HttpRequest(httpConnection)\nresponse = httpRequest.get(\"\
+          /xlr-inputs.json\", contentType='application/json')\nif response.getStatus()\
+          \ not in HTTP_SUCCESS:\n    print(\" ERROR %s\" % response.getStatus())\n\
+          \ndata = json.loads(response.getResponse())\nreleaseVariables['jsonString']\
+          \ = data\n\nfor rec in data:\n    print(\"Project Name : %s\" % rec['projectName'])\n\
+          \    releaseVariables['projectName'] = rec['projectName']\n    releaseVariables['buildDefinitionName']\
+          \ = rec['buildDefinitionName']\n    releaseVariables['releaseDefinitionName']\
+          \ = rec['releaseDefinitionName']\n    releaseVariables['azBoards']['taskNumber']\
+          \ = rec['azBoards']['taskNumber']\n    releaseVariables['azBoards']['pbiNumber']\
+          \ = rec['azBoards']['pbiNumber']"
+      - name: gate
+        type: xlrelease.GateTask
+    variables:
+    - type: xlrelease.StringVariable
+      key: jsonString
+      requiresValue: false
+      showOnReleaseStart: false
+      multiline: true
+    - type: xlrelease.StringVariable
+      key: projectName
+      requiresValue: false
+      showOnReleaseStart: false
+    - type: xlrelease.StringVariable
+      key: buildDefinitionName
+      requiresValue: false
+      showOnReleaseStart: false
+    - type: xlrelease.StringVariable
+      key: releaseDefinitionName
+      requiresValue: false
+      showOnReleaseStart: false
+    - type: xlrelease.MapStringStringVariable
+      key: azBoards
+      requiresValue: false
+      showOnReleaseStart: false
+    riskProfile: Default risk profile
