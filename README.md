@@ -1045,7 +1045,7 @@ while len(allTemplates) > 0:
 	allTemplates=templateApi.getTemplates("",[],page,100,1)
 
 ```
-###Get folder path by ID
+### Get folder path by ID
 ```
 def getFolderPathById(folderid):
     target=folderid
