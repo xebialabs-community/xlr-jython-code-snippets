@@ -1045,4 +1045,17 @@ while len(allTemplates) > 0:
 	allTemplates=templateApi.getTemplates("",[],page,100,1)
 
 
+#Get folder path by ID
+def getFolderPathById(folderid):
+    target=folderid
+    foldername=folderApi.getFolder(target).title
+    folderPath=""
+    res = [i for i in range(len(target)) if target.startswith("/", i)]
+    for p in res:
+        if target[0:p] != "Applications":
+            folderPath = "%s%s/"%(folderPath,folderApi.getFolder(target[0:p]).title)
+ 
+    return folderPath + foldername
+
+
 ```
