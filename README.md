@@ -1046,6 +1046,7 @@ while len(allTemplates) > 0:
 
 ```
 ###Get folder path by ID
+```
 def getFolderPathById(folderid):
     target=folderid
     foldername=folderApi.getFolder(target).title
