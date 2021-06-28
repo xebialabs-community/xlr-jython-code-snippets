@@ -688,7 +688,7 @@ taskApi.updateTask(t)
 
 ```
 
-## Create a Self Scheduling Task Block - Style 1
+## Create a Self Scheduling Task Block - Style 1 ( Try style 2 below as its improved )
 This example makes use of a Sequential Group. You can have any number of tasks within the sequential group but the last task should be a Jython Script/Custom Task with the following Script.  The script will replicate its parent Sequential Group and then reschedule the newly cloned group for a certain datetime
 
 ```
@@ -724,6 +724,8 @@ taskApi.completeTask(activetask,Comment())
 ## Create a Self Scheduling Task Block - Style 2 ( Better )
 This example makes use of a Sequential Group. You can have any number of tasks within the sequential group but the last task should be a Jython Script/Custom Task with the following Script. The script will replicate its parent Sequential Group and then reschedule the newly cloned group for a certain datetime
 
+The script task sets a variable **repeatTask** as boolean with default True.  This will keep on rescheduling the sequential group as long as the value is True. To stop repeating,  either programatically or manually set the **repeatTask** variable to false.
+
 ```
 from java.util import Calendar, Date
 import time
@@ -742,9 +744,10 @@ newtask = taskApi.copyTask(parenttask.id, phase.id, len(phase.getTasks()))
 # Set the newtask to the new time and title
 newtask.setScheduledStartDate(cal.getTime()) 
 newtask.title = parenttask.title
-
+newtask.precondition = "releaseVariables[\"repeatTask\"] == True"
 # Update the new task
 taskApi.updateTask(newtask)
+releaseVariables["repeatTask"] = True
 
 ```
 
