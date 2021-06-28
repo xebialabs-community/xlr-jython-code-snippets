@@ -722,6 +722,7 @@ taskApi.completeTask(activetask,Comment())
 ```
 
 ## Create a Self Scheduling Task Block - Style 2 ( Better )
+This example makes use of a Sequential Group. You can have any number of tasks within the sequential group but the last task should be a Jython Script/Custom Task with the following Script. The script will replicate its parent Sequential Group and then reschedule the newly cloned group for a certain datetime
 
 ```
 from java.util import Calendar, Date
