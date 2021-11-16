@@ -56,6 +56,8 @@ for item in dataobj:
         taskApi.addTask(phase.id, task)
 ```
 
+
+
 ### Configure reference to Certificates for access by Python Libraries in plugins
 There are third party python libraries that often refer to a certificate using certifi for connecting to secured URLs. If the cert is self-signed, you might need to make it available to the python lib.
 1. put the cert in a cert.pem file or append it to a cacerts.pem file
@@ -343,6 +345,22 @@ def gatesBeforeTask(task):
 print "start gates " + str(phase.getStartGates())
 for item in gatesBeforeTask(task):
   print item.title
+```
+### Add a Gate task with a dependency
+
+```
+current_phase = getCurrentPhase()
+task = taskApi.newTask("xlrelease.GateTask")
+task.title = "My Gate Task"
+taskApi.addTask(current_phase.id, task)
+ 
+blocking_release = "<Name of your Release>"
+blocking_phase = "<Name of your Phase>"
+blocking_task_name = "<Name of your task>"
+ 
+dependent_release = releaseApi.searchReleasesByTitle(blocking_release)[0]
+blocking_task = taskApi.searchTasksByTitle(blocking_task_name, blocking_phase, dependent_release.id)[0]
+taskApi.addDependency(task.id, blocking_task.id)
 ```
 
 ### Find a task by title
