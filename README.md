@@ -306,6 +306,18 @@ taskApi.updateTask(task)
 raise Exception("Jenkins job was not built.")
 ```
 
+### Using Task Failure Handlers to retry a task x times without an additional releaseVariable
+
+ Define additional action in a [task failure handler](https://docs.xebialabs.com/v.10.1/release/how-to/task-failure-handler/#disabling-the-feature) an use this script to retry the failed task a maximum number of times equal to a defined value.
+
+```
+MAX_RETRY = 3
+
+task = getCurrentTask()
+if (task.failuresCount <= MAX_RETRY):
+  taskApi.retryTask(task.getId(), "Retrying task from failure handler.")
+```
+
 ### Set the release title using release variables
 
 ```
