@@ -1,5 +1,5 @@
 # xlr-jython-code-snippets
-XLR code snippets using python and jython API
+XLR code snippets using python and jython API.
 
 
 ### Dynamically Create Release Flow based on data map ( Jenkins example )
